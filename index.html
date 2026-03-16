@@ -34,8 +34,8 @@
   }
 
   /* CUSTOM CURSOR */
-  .cursor { position: fixed; width: 10px; height: 10px; background: var(--neon-blue); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .2s, height .2s, background .2s; box-shadow: var(--glow-blue); }
-  .cursor-trail { position: fixed; width: 30px; height: 30px; border: 1px solid rgba(0,212,255,0.4); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: all .1s; }
+  .cursor { position: fixed; width: 10px; height: 10px; background: var(--neon-blue); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .2s, height .2s, background .2s; box-shadow: var(--glow-blue); opacity: 0; }
+  .cursor-trail { position: fixed; width: 30px; height: 30px; border: 1px solid rgba(0,212,255,0.4); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: all .1s; opacity: 0; }
 
   /* CANVAS */
   #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
@@ -69,8 +69,44 @@
     display: flex; align-items: center; justify-content: center;
     padding: 120px 60px 80px;
     text-align: center;
+    position: relative;
   }
   .hero-content { max-width: 900px; }
+
+  /* HERO PHOTO */
+  .hero-photo-wrap {
+    position: relative; width: 150px; height: 150px;
+    margin: 0 auto 28px;
+  }
+  .hero-photo-wrap::before {
+    content: ''; position: absolute; inset: -3px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+    animation: spinRing 4s linear infinite;
+    z-index: 0;
+  }
+  .hero-photo-wrap::after {
+    content: ''; position: absolute; inset: -8px; border-radius: 50%;
+    border: 1px solid rgba(0,212,255,0.2);
+    animation: spinRing 8s linear infinite reverse;
+    z-index: 0;
+  }
+  .hero-photo {
+    position: relative; z-index: 1;
+    width: 100%; height: 100%; border-radius: 50%;
+    object-fit: cover; object-position: top center;
+    border: 3px solid var(--deep-space);
+    box-shadow: 0 0 30px rgba(0,212,255,0.3), 0 0 60px rgba(155,89,255,0.15);
+  }
+  .hero-photo-dot {
+    position: absolute; bottom: 8px; right: 8px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #4ade80; border: 2px solid var(--deep-space);
+    box-shadow: 0 0 8px #4ade80; z-index: 2;
+    animation: dotPulse 2s infinite;
+  }
+  @keyframes spinRing { to { transform: rotate(360deg); } }
+  @keyframes dotPulse { 0%,100%{box-shadow:0 0 8px #4ade80} 50%{box-shadow:0 0 16px #4ade80,0 0 24px #4ade80} }
+
   .hero-greeting { font-family: 'Share Tech Mono', monospace; color: var(--neon-blue); font-size: .9rem; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 20px; opacity: 0; animation: fadeUp .6s .3s forwards; }
   .hero-name { font-family: 'Orbitron', monospace; font-size: clamp(2.5rem, 7vw, 6rem); font-weight: 900; line-height: 1.05; margin-bottom: 20px; background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 40%, var(--neon-purple) 70%, #fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; text-shadow: none; opacity: 0; animation: fadeUp .6s .5s forwards; position: relative; }
   .hero-name::before { content: attr(data-text); position: absolute; left: 0; width: 100%; background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 40%, var(--neon-purple) 70%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; filter: blur(20px); opacity: .3; z-index: -1; }
@@ -285,7 +321,11 @@
   <div class="planet planet-1"></div>
   <div class="planet planet-2"></div>
   <div class="hero-content">
-    <div class="hero-greeting">⟨ Initializing Portfolio ⟩</div>
+    <div class="hero-photo-wrap">
+      <img class="hero-photo" src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAD+AL8DASIAAhEBAxEB/8QAHQAAAQUBAQEBAAAAAAAAAAAABgIDBAUHAQgACf/EAE4QAAIBAwIDBAQKBAoIBwEAAAECAwAEEQUhBhIxBxNBUSJhcYEUIzJCdJGhsbLRCDVSwSUzNmJjc4LT4fAVFjRDcpKjpSRTVGSDhfGi/8QAGQEAAwEBAQAAAAAAAAAAAAAAAAECAwQF/8QAJREAAgICAwACAgIDAAAAAAAAAAECEQMhBBIxMkETYSJRFBUj/9oADAMBAAIRAxEAPwDZ8mvubG9IU5NKrE6BYcEV3m9VNgY3pQoAWrGnVbao5I8TioN7q9lZxySXMyRpGuXZzhR7ztSsG6LV29E+ygvi/tE0jh+IQxML27IIEcbDAx1yfV6qzXj7tc+FCWz0Z5RCQRJLH49BhTnOOuTWSyanJquuJAZSkMj8rydDgbn9+1aRh/ZlLIHfGXaDr+u944uBaWgGGCtgAfs58fYKAjeC6PdgRW6n+MbfmfzJJ3P3Uji+6uHu1t4YmgtYkxFHjP8AaJ8WPn9lVOnoue8m5nAI2ZsCrUUQ5Ms3toUPolGC7j10q3vbaJ+aaBZTjbLY5fqpoLz8oQxRoxwFQ4AFM3Fq8XRsjPWqJQ/c32c9xlB+yCf3mmbbUZIJ1nicxyocqy7EGocoA2Z9z0ApIEeAOVgfPFZstNo2/sz7ZLm0misuI5JLi1PoicHLJ6yPGvQWnX9pqFolzZXEc8LgFWRsgg14ODGM4BJos4N4713hiYSafeFY85aJ/SQ+49KlxspTZ7O60ms17Nu1vR+JYBbaiVsNSGxQn0JP+E9c+qtGimjlUGNuYHxFL9DY5gVwrg7V0nFcztVAcNIOfClsdqSaBhF2eHOtTfRm/EtHlAfZ5+u5h/7ZvxLR5VIzl6YyqkHNdrgL9eY13JIrI3FHGetJJIPqpQ61xyAN+lAEbUr630+xmvbp+7ggQvI3kAMmvPPHnFuqa9amZpTbaZcSMwQ+iXQE4z59Proo7b+LRLZT8N2DlizfHnOMBRzFfZsM1leqobuWzsWm5e5iALIuQAwGx9g/OrgjKcgf54pbWc8qoT6MeTgJuDv7sj1mu2xtdNsmmtXlaXIzOy4w383y9tRtYtE0yRgZg25Kq2zZ22x/nwqFHfIbVMel3ZIUHxNamQ3f3TzTc7y5brhuppcAklVS6j0vUM7VF7g3Nzl3LODlgNwPVU8olvbEblM7AHoaAqy502z7xFUMQT1Jx0++l6mF5QqgkBevLih23ln+EhBeckXmTgkeurCS+YxiFZA6D9k4z7+tFjIlyeRvWdgAN6jNcEE5wPYaVcSgOx5Rv0zvUSYGTHMueXbYYxU0Md+FRrnJJJ8sbV8kwkIAXHrqOSqYBUU7EzfNAHvoAsLaWZCOQ8mN85xRvwV2jcS8OXqSLeSXlsBg288hZcerfb3Vn8avuS2PWaegWNWy8zMfCjQHq/hHti4Z1qSK2u++024fC/Hgchby5s/fitHVgyjBBzXhiEtkFXxitg7GOP8AXNOng0rVFmvNLllWGOVt2gY9P7P+RUtUWmeiiAKSQB0NcjbnXcYrppFBF2e/rub6M34lo7oE7Pf11N9Gb8S0d1SM5emNdK+pIbGxG1L8NqxNmzgJz1pq5fCMu2SNs06TgVT8Uy3EekzS28TyyxgOqKRlsEHG5HlTEpHnPtKnuLLX726HKveXUnK5G3KTyjP1H/OKAtS1qeNEjhlaMYBYg4z7qO+1+Y3kkdyySxxtIXKEYB3JyOv7XT1Vk2osS7AtzHwrSBlI7f6gLgBOTmON5GJyfd4VHsvTbl8c7Gm2gIiD9Mnf1Vaae9pYxCbBebqAwzV2Iki4W2szFbYzJ8pyME+furlwR8AXfLE746VHkWW4kZi5PNgtjYb+FT5LWOOyifkIbJJA8R+W1Q2Uo2V8dtNPdIijZlHj4Y8atJ7e2sLcDvEmlYbkeHqAqs+FzpKzryIT6OSOg8hnp/ncU9EjTHK80h3xn5I9f/7T7E0RpnZ2yVOOgplz052wPI1YCEyMVQcxA8B0qovOfvyGUj20k0OmfSENIAuAKkR42BbHsqGnytzipCvtyp6I8SepqhEoOAcDO3rpxZEXq258hUIyEDYV9ExZweRm+ygC6suaWVVVS242861/hix0ia2gn067aGRxyXUM4KBW5sY364339h2rK+FDFNq1vbEiMyOEDHGAT06nHXFbPw1oWlSXtxq0JMTo0XKLo8wEqjDgtuMHH3eVS2aQRuunTLcWySKxOw3qQ3n51F0yQm2QkYOPA5FSiwIxSGEXZ7+upvozfiWjugTs9/Xc30ZvxLR3VIzl6Y0EYkFQWPiAK4y7ZGx8jU34e6ujKiKUGAcVCdvSLdc9az0yxBY4wetMT5ZSCnMp8xmn3wV2psnbB+ukORlHa/wVLfWvw3RlJuCxLxMfQOx9L1V5s1u1lt75oJoyJUYqylcYPiPbXtrWFEluRgnJA29oryrxloMjahqkkrTR3lm8hx3fxco58lg3gcHOPPNXFkPYDzpGlkoEsZZjkqueYY6A7Y++opjeJFZ1PMwyM1YQo17qMdpGqgysANulaFFwRELmJ5UIjEY5eY5yajJlUHs1xceWTaM1tZmiOTCze3pU0anc8mBGpBXl3HStRk0XSoIirxRKQMb+NVtzpWjq2QsO/hgrWD5MWda4cl9gDa25ukCBdzjcrnHsqy0nT5YbhraQ5AwwG+4PnRVZ6faQPlEXHhVja6dZi5+ElTzsAMj1Z/Os58k0hxN2yhaxit7dmiCgj5uN6EtZ5Hk5mjBI8hWo6lodpPEJe8kVvMHB+uqK54c08bs8kjfzjRjzJbZWbA2qSM2McbNgrye6nY9OmmGISp9+5o3fhW0nPypVJ2QLjel3PAtxbRJNbTMXG5Pr9VdCzxZxvizXoDz6bcWqg3A5M7eukxiNRkknyFFfEMcs/D5kuUHwi3PKzDx9dCMakjr49K0xz7Iwy41B6LDTcJOkix4KsCDzb7V6T7J+4uY5xNbRi5mkM3x6FzhupQ4wAfHf21h3B/Ddxq2k6lqeCkFmi8rHYM5PyfWfur0b2UaWLjhfSdUdmjuGhGWiPLnlJGSOhyKpiiw8srW2g9KOFFcjcgVKwKQK+5tqBhN2en+HJvozfiWjygHs5P8ADk30ZvxLR9VIzl6Yz3Kkti6kYeB7sb/bTbIR/vSf7Nd5uU0lmzWRdjbK2MiQj3U2wfGO8OfYKdJyKac+dArI88RZMGRiPHYVnvaVo0w4e1m5tVWbvrZy6EBWU8uOYHx26j7a0ORyKFe0S8ay4VvbhcNhOVhjwYgH76LrZUYuTpHmjs8sVueMLYHflVmz7sfvredZ053sVxG2Au3KMkVlPZZYqnHFxEPSWJcK3qJzXp3R7WCWxAZMnHXxrlypZJnfgbxQ/dnmnU/9ZglxDa2rafEufjpFBdj5ee9DEA15r1RdzXJg3LuyqSeuAB4eH216i4q4Y069yQ8qOepUjegWfs1W5uMLeOqZ2DAfuqVPrqjVRjN9rZlHDkOp3OoGz7lmDkFSPD6q1B+HXtLROaNwwXJProt4c4JstGuQ8ahnRQM+JPian63GCDGU3x41hmTZ04pIx/XnlswC2e78cb0F3uo3ctvc3aZ7qBeZhzhWxnHTrWo8QacWBVkyM7GhK+0AnB7pZFOxDrkH1UsTivkVljJ/EH+F+IxHKHkgvAuN5VbvQABk5B3xitK0+/gvYlZCjoy5V16NQ/oPD62bu1qjW5kQo3d/snqBnpVlovDkeks7WrSKjnJjJyAfMVeSUJfExxxyR+TKLtHtY7bQbuRFA5yPvFBfZ5wxd8W8S22kWnohwXlkI2jjHVv8POj7tTU/6ryAnfnUfbVp+ilaQjVdavC696kMcKL4gEkk48vRX6q7OL8Dzuav+hr3DvBGk6Vo1vpaoXt4iWwfFjtzHzONv85ontrWG2gSCAFIkGFVcYA8hXVbbelhq6DmOhVzuWP9o180aeBb/mNdBFJzg0FIJezhAuuTEZ/2ZupJ+ctaBQB2cn+HJvozfiWj+qRnP0xQnIpB2rpY53pLmshiSdqaY+dKY7U0zHNADU/Whrj6yfUuFL+1jBLsgIx6iD9woil61FuCAD6vCk1aLhLrJMwvsqtXXjm6RhkiMGvR2hMEgC4BFYjwLALftI1JAxbliIbI8QwH7q2XT7lY0yRuBXM2lI9FrstD2qGNAXbAxvig+/1Ga41KGytGCvJJgMfmjqT7gDVzrF2ZQ6g4oet9LnmvTdRSd26ghWPrFc85OUv4nRiiox2XGo6vb6XyQNcIScAu5G59tUd/qizznlO/iaAOMOD+LNT1OWK6t2urNjkSLKCR7FO4p2wg1OzRYpyymEcqiTqQOmamaf2a4lG9BZdmOWMo25IqqVFWQ28q+kOhPiKBtVfU7XWo9RsZ7ySeQBX9Msox48ucYoxhuZrxoZ5Yu6YLggjqazlGjVbJYg7lvQG3hT2xTfrSky0fKc0xOSp2qRNWBfaq5HDyx75e4VR9p/dRt2EcH3el2kOuPM0XwmIgwnfIJ6+o5AoS4ys5NU1DSdLiGZJ5yVHsH+Nb7o0AstOtbTY9zEqZA8hivU43xPI5VdiyU5G/Wl5ApoGu83hXScQ5n119zU2DXC+aBhZ2bH+HZvozfiWtBrO+zI516f6K34lrRKpES9MROBuaQx22rjHbY1zJC79ayGJJGMYxTT4xTjb0y3U0ANS1Fn3U+FSZDTEoytAGf6fYTWXaPfSsPi54A6Hz3GaM5LpooupG1VesRmHVbS72AOYmPt6fbXbiQuCpPSuDkKpHq8V9o2RtT1ZIXAdsZO5NOcP662oXRgtYyUHVsbUO8RWF3qJWCz/jWOBSuF+AeI9LgmL8QRck55mAi5mT1ZyNqjCm9m+T+gv1m+t4EMbXi954qg5uWge+EEkzSPeKSfEoQTVjrnB1gMSDiDUDJjLBlTlB8cYoeudGnifEWpRygbDnQgge6tMkO32dHHxRUdCREve86OrY9WKfW+ihYJKOX21XT2l/EOdbq3OOowd6pdb1HVHhEVvprMVYZcnbHjisvx/srJ/EP4J0kA5Tmuz7e+qXh+RpLWNySDjcHrVuzFkG9YieyJw3Glz2oacHGRa2sko/4icVskfhWb9ntij6xqGqt8sBbdD5YGT94rRotsb162HUEeHyHeR0SB0pQOaa5txinBsoPnWtmNCq42MV9mk0xBV2X/r+f6K340rR6zjsw/X8/wBFb8aVo9UjOXphJY18Wr59lpAOR66yKOkjHWmXrrkgU2T50AJfrTb042D0pt+hoArNctzcafLHGvxgwynHiDkVQJcrNCrgnJFFM7eiQd9qze41BLDXruAjlti45PJTgZ+s5rm5EbVndw51aCOyJScOBvVvJdyGI+kR91Uem3ccvLykGrmREkhJ2xiuK2tHoak7A7iO7uBMEQc2euKru6Bj5iX5/Ki54bdieaMZXocVV3kUYkPIgA6UXZ1QlRVwRAoCyAkjfNOOsZHLygDyp7u2VuuBTM8XKcgk0mTJtsRbosbEqoAPQVJLGTlRBlmPKB5k1FMqIoPMM0R8GaeLhv8ASEoyqkiMEdT4mrxYu8jnzZfxxsI+HrAadYRwZy/Vzjqx3P5e6ryLzwar1BB2HjU5M4r1apUeO3bsfG5zvTuR3eKjqx8qdVgVwaBC/S8K+wa4rDwNKDjPlQxUFXZh+v5/orfjStGrOuzL9fz/AEVvxJWi1cfDKfpgwbrmm5Djwr4sMU27bdazKaZ3mpDHyptmxSGk2zQCVi2NIL0w0uc00ZH6hWI8wOlBVIkCI3E6269XOM+Q8T9VZPq7RXuoXciL8U8rBc+WcCtt4Os/hEz3cgyF9BR5k7Gsh4p0ibh3iu80y5B7iR2mtZPB42OfrBOPq865+Qn1s6uG13cWCtzql7okqtktCDsfL1UUWHGltc6eriQCUbMhO/t9lVmoWUV1bsjqHVqC9S0K4tZWe1fIxspODWEHCaqXp1ZIzg7jtGm3GsrcR5jcbjrUWK7Lt6T7+NZhBqGqWcoUpIoHTyqfDrV83zHJPjy0PCvplw5LraNGku1AALDfbbwqvu9VgiUqWHMPCg+S91SVSFLR5HWmrSykaTvriYv44qfxxW7LeWUn4XS6g91McErCPlHxNbZp0cUUEawgCIoCm3UEbV5+nW5u7iPStMjMl1dsIolHmfH2Dr7q9JSaU+maFp0bkySQwrFI+OuAN/rzXVgXrODlvaQld8VKU4UDxqFFIpHsp8S10WcxJTOcmnFORjFRklOd6dRubpTRLQvpXC1I5tzX2c0DSDHsrbOvz/RW/GlaVWZdlP8AKG4+iN+NK02qj4ZT9PPRkwmSR6hTDs5GQrfVReNKtbeN+SBXkVQctvS5bRbi15otjjoKzaL7gQ0x6HI91Kt7O8vHAgjOD847Ae+rCe3K3isUBGcHIq606IgBl2C1KWw7ECPh+GCMSXUplkGMqNlFUXFDSrJFYWajvJTsB4CtBji7xeR9ww8aBdZKW/FsfOrAo6L6iD/+1TJi7YZ8OWIsdPitlJbkUDJ8T1J+2qTtV4RHFGg81pypqVoe8tXPifFT6mG31Hwots1zAp8xmpMa78vnVdVKNMUZuMrR5VtWlDSW9xE8M8TckkbjBRh4EUi+teeMkjet67SOzyLW4zqWnKsGqKvoN0WUD5rfuPh7KxGZniuJrK8ie3uoWKSxOMFW8RXl5sEsbPc42eOaP7Be4tVL+kgr6G2RUOBgVey2qMcjBzTTWiqDk4FZ9zopIo5UAO29R2W4nlS1tYHmnlblSONclj7Kv4NMvNRvYrDTbWS5uZThEQb+31D11r/AnZ1/qyxubrF1qMqjnlUeinqXPh99bYoPJs5s+ZYvvZB7HezyPQR/pbVkWXVpFI81gX9lfX5mtG1GITWskf7SkD21Jt4BDEF8epPnSJgWGSMKK9CKpUeLKblK2Atujys0bEJKhIOfHG2DUgQXK7GJzjxAzTmoIsV1JKuzM2+321YWbtLZgHAJ8RQvS7Kou8fy0Ye0U5BP6XXrX2sZYrvjB60uyiLW5cxqQOhPU0DQ4jgg5ruQdgBSkSBhkZXPka78Gk3MTc2PA7GkOws7Kf5RXH0RvxpWm1mHZOJF4kuFdSp+CNsR/PStPrWPhjP0zzU7Z4IRcDOF9Fh51X6U/wAayHodxRB3i3OkzIwzmPmWhqz+Llz5GkJEHWoDBqDYHotvjFPae5cBdgPKrHiqAOkFyo2ZBUTRLR5A0x9GNerGlQyyhXBXcUJdoekTC4GoxKfQGJMeAzsaKrX46+SPfu09NvYP8inkRdQaaGYBw4OAelD8EtDHDc63emRSjqVB69KubZD3y4UGhvhKF7BpNOfOY5CFPmp3B+2rnifiCx4U0p7u4R7i7KEwWkZHeSt5Dy9ppoTRF7TON9E4A4cbVtbl9JzyW0CDLzPjIAH76C7+x4M7WeH49Z0i6ih1Jo+ZJAOWRDj5Dr85f8ivK3bJxNxbxjxVLqnEMNxbcnowWrIVSCPOyjw9p8T7q+4I4g1PQLcxHLr1i5GIZfUSB0qpQ7qhwm8btGo8TcKcRcMykanZu0HzbiH04z7+o9+K5wxod9xDK/wdo4raPHe3EpwiZ6DzJO+woPn7V+NIPi7W7CRb+jIOc/XVVc9ovFk8CW8cltaxKWcrBbqgZmO7HzPT6q5P8FdrO3/YvrX2egdKudC4H0y5ewuVub58LPdsoyg8FUeA8fXWccHfpAajDxkbTXCLnQ5ZO7707yQnOOfPivmPLpWU6nxLrt5G8V1ecyt1AUL91U+iaa15qUFnEkrGRwDyLzMB4kDI6CuqONQVHHLK5ytn6Ac6SIrKQyMAVYHIIPjTN2wERHTOwrIuzzie+0C1g0SeCS806ICODL5kiHgMn5Q9Xh9lafHeQ3tt3kJfHUqy4IqEFUVN5bmeYou+dyfKk2oeCGVGOQjDDD11OjXu4nkO5c/ZUeQ8ljO58MGk0aR8Kq8aSaZY8k52FXZj7mz5ANgKhaLbieQXLbjwHlVpdj0ceqmkDKoLnFWdpHmPNQSvLvipmmtzIy0L0TdhZ2cD+G5z4/B2/EtH9AXZuuNWmO+TA34lo9rRGcvTPNLl5dPmDY2UqMH+dt9lVeCJT7ae0pybW5yfnqAPd/hXxX401HoFsLdL3Q0Eh3jYjPqqt1C5SC0FvAOSNfrY1a6Vvp9yhOMEN9hob1xsSLGPHehjXpO0r4vTp7gn4yQhB6h1p/SpO7vlbz2qBC3Lbxx56CnYnw4NCAVxg93p0gurAiN5Byd5jJX2eugmayluZGuJ3eaUnJdzkmtQ1S3TUNIZSMty5HtoOtYwH5HG4ODTaBANxxwvDcIs1xbo8LoYpQR80isN1nR5tD1GXTJRnu/4tj89fA17Iu7S31DTpLZkG6Y6eqsQ7WuF559Ie9WM/CtOzznHy4sZPvHX66uDpkTVow+eJSST4VAnwmc4q0mHl0qovzgGtDKiunPO55a1vsQ4WY6fNxBdJtOe5tsj5oPpt9YA9xrL9C0yfWNZtdNthmW5lEa+rPU+wDevV9rpsFnbWejWC8sMMaxoB15QMZ/z51lNm2OP2J4a0KO4v/hHL8TGdjjqaOLe0UIyIuBTenQJawLCigAVawhVt3cnGASKhKjRuyknQGVok3CejUeW3Z4JYh85SBVhp695Llvndc1avZRQwPI4yxG3qoasXage4dtHi0pHkUgszdfaaeuFzV5dQ91awxYHyBt6zv8AvpmTS2wMk58aAuwf7nOQaTAGguV6gE71dSWEkR5ipIqDdx4GcbjeihoLeAU5dWlx0NufxLRtQdwMP4QZvO3/AHrRjVohmV6Rj4EzftSH7NqfHKDzMfdTNiO60y1ToSvM3tJz++vpCScA1mtAXOjyd5Hdejj4sH7aHNTHNqQ5twAPvoh0IYW5H9F++qG/X/xTNVAnR0N0pxN2FRlbFOo2+c7Uh2EWkTBozGxPTah/Wrb4JqLMowrnIqdYTtHIrA7Dr7Kl8R24urJZkGSu/uqvolFfaXHJKjZ2I3FI161s7lXSVFKzLhtuu3+NQ7Un6hUlkaV0ZjkIOlJelNHkztA0VeHuJr7TnmRYY35oiWxlG3XPrwRQLqlzbE4jmVjnwNad23ahb6hx/e90I3itALVWAG/JnmJ8/SJHurK9SwZD6I+qtznfpp/6Pujxy3t5r06BhbqIbc4z6TfKI9gwPea9A6FbMrNeXA+NfoD4CsI/R24iAupOGrpxySc01nnwfHpL9Qz7jW/LN6IrGXp0QqizicvJip92e7sGHiRiq/Sk5jzH3VO1I5t8VIEXTx6WaIVTv44x1DYBoestiBRHpB+LLN/uxkUwYjUwpulHzQRUqQqd9sVGnIl9L111ZOZME0MQi+cd3jaqu4gSRSQOtS789B4+VNWaNLcJHvuaACfha2ENzzD/AMjH3URVU6MvJdEeUePtFW1UhGYOFBCjooAApjo5NOsd800TmTlx1qALzREIs7qTzTFUd6PTzRHYgx6LOcbn8qHZ91360MCNXwJzivvGlRj0qQ2PRyFFIHU7Ve2Eve23Id+XbHmKoB8qpthOYpM5wDsapCFXFtHC5HLsTVLxRqyaDw7qepE5MFq7IPN8YUfWRRPeqGhZh4DNZB273TxcAXKqxHPKinHiC4ppbBnnPVLjvJpZWOWdixJO5JodvWzJnFWdzJnOaqrvdga2ZgiRo1/c6VqVtqVm3LPbSrKh9YPT2eB9Wa9bcK6nFr1nb6hbMWt541dT7R09o3FePVPgRXoL9GHWRPpWoaNK45rRxLCM/MbOfqYfbWUka42bnYtyuFHSpN8QY6haa3NLUy9+RWdmoxan0h7aIIj3OmFvGQ/ZVBZgtMqqCSTV/rOIoooF25E3qhMjWrlomyelNvKR6OKXphUwOepzTVww3AoJGpJC7kmpugrzX6HHyQTVbkhSauOFgWeRyOi/vpL0bCbTP9tYf0Z+8VaVUaU+dTcf0R+8Vb1oIyp2ytJtBzzjJ2BpBbmUYp/SgvesxO42rOrAv2bk0eQfzsD6qHZD6Jq8uGBsAgPjk1QynY05eAMmlKcCkc1cZtqSKodiOWzUiOott45p/OB7aBP0uLJu+tHRt2ANYp+kM3c8FlGODJdIi+3dvuBrYNLl7u5CnowwaxT9KaYRabYWWd5LxpP+VCB+OrjtomT0edbljzGoM+4qXOck7VDm61o2ZCPGjbsd106FxvaSuxWC5Bt5cnwbp/8A1y0Er1p6B2R1dSQynIPkRU+jWme5+Hm72ESZ6jNTbtsoM0O9l1+NT4L0/UMgmaEE+3x+2r27O+M1i9G6J3DsXe6lHn5I9I+wVK1qbnuJDnocV3hdOSOaf9lMD31A1B8kkncmmtITH9IYlnXzGacuwFHtpGgAGXcfNNO6jjveUeFP6EV82ygUTcNxd3YFyN2OaGZfSkA9dGGnp3WmxDHzc0RQD+iPzaxIPKE/iFXtDPDchbXph5QN+JaJqsDN4+Gdd5AGscH+tT86VFw3rqNkWZG+/wAan51o1fUuoAb/AKH1Y2rIbT0j0+MT86rJeGtbZSBZb/1qfnWi19RQGaLwvr3jZf8AVT86+PC+vf8Aof8Aqp+daXX1FDsziPhrXB1ssf8Ayp+dLHDmud4CbHYf0qfnWiV9S6oRn0fD2uLLzfAvHP8AGp+dZX+kJ2Y8ecValpsugaH8MijRjMfhcMfKxx+24z08K9K19TSoTVng5/0fu10k44S/7ja/3tRpf0eu2EnbhDP/ANlaf3te+q+qmxdEeAz+jx2wk/yQ/wC5Wn97S1/R67YAP5If9ytP72vfNfUWHVGCdiHA3G+gcFrpOv6KbSaGZ+7U3UMmUJz1Rz4k0aTcM62zZFlt/Wp+daPX1Q4pl2Cljo+oQaO8BtwJmPTnXpj21UXfDutyH0bLI/rU/OtCr6jqhAXpGhanBky2vKcbfGKf319d6JqrzsyWuR4fGL+dGlfU6AAU4d1gzhmtMLnr3ifnRNJZXQtwiRZIGMcw/OrivqEqAHuHdOvrXVpbi5g7uNoioPOp3yD4H1UQ19X1MD//2Q==" alt="Harshit Guglani">
+      <div class="hero-photo-dot"></div>
+    </div>
+    <div class="hero-greeting">&#10216; Initializing Portfolio &#10217;</div>
     <h1 class="hero-name" data-text="Harshit Guglani">Harshit Guglani</h1>
     <p class="hero-role">Computer Science Student &nbsp;|&nbsp; Aspiring Software Developer</p>
     <div class="typing-wrap">
@@ -294,7 +334,7 @@
     </div>
     <div class="hero-meta">
       <span>Phagwara, India</span>
-      <span>LPU — B.Tech CSE</span>
+      <span>LPU &#8212; B.Tech CSE</span>
       <span>CGPA 7.32</span>
     </div>
     <div class="hero-btns">
@@ -316,26 +356,14 @@
     <div class="about-grid">
       <div class="about-text reveal-left">
         <p>I'm a <strong>B.Tech Computer Science student at Lovely Professional University</strong>, driven by a deep passion for technology and problem-solving. My academic journey has been shaped by curiosity and a relentless drive to build things that matter.</p>
-        <p>I specialize in <strong>Data Structures, Algorithms, and Software Development</strong>, with a strong interest in machine learning and data analytics. I believe the best code doesn't just work — it solves real-world problems elegantly.</p>
+        <p>I specialize in <strong>Data Structures, Algorithms, and Software Development</strong>, with a strong interest in machine learning and data analytics. I believe the best code doesn't just work &#8212; it solves real-world problems elegantly.</p>
         <p>Whether it's building a <strong>crop recommendation system</strong> or analyzing sales data through dashboards, I bring analytical thinking and creative engineering together. I'm always looking for the next challenge to grow and contribute.</p>
       </div>
       <div class="about-stats reveal-right" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-        <div class="stat-card glass">
-          <div class="stat-num">3+</div>
-          <div class="stat-label">Projects Built</div>
-        </div>
-        <div class="stat-card glass">
-          <div class="stat-num">4+</div>
-          <div class="stat-label">Certifications</div>
-        </div>
-        <div class="stat-card glass">
-          <div class="stat-num">7.32</div>
-          <div class="stat-label">CGPA</div>
-        </div>
-        <div class="stat-card glass">
-          <div class="stat-num">85%</div>
-          <div class="stat-label">ML Accuracy</div>
-        </div>
+        <div class="stat-card glass"><div class="stat-num">3+</div><div class="stat-label">Projects Built</div></div>
+        <div class="stat-card glass"><div class="stat-num">4+</div><div class="stat-label">Certifications</div></div>
+        <div class="stat-card glass"><div class="stat-num">7.32</div><div class="stat-label">CGPA</div></div>
+        <div class="stat-card glass"><div class="stat-num">85%</div><div class="stat-label">ML Accuracy</div></div>
       </div>
     </div>
   </div>
@@ -345,53 +373,23 @@
 <section id="skills">
   <div class="section-wrap">
     <div class="section-tag reveal">Technical Proficiency</div>
-    <h2 class="section-title reveal">Skills & Expertise</h2>
+    <h2 class="section-title reveal">Skills &amp; Expertise</h2>
     <div class="skills-grid">
       <div class="skill-group glass reveal">
         <div class="skill-group-title">// Languages</div>
-        <div class="skill-item">
-          <div class="skill-header"><span>C++</span><span class="skill-pct">88%</span></div>
-          <div class="skill-bar"><div class="skill-fill blue" data-width="88"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-header"><span>JavaScript</span><span class="skill-pct">80%</span></div>
-          <div class="skill-bar"><div class="skill-fill blue" data-width="80"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-header"><span>C</span><span class="skill-pct">82%</span></div>
-          <div class="skill-bar"><div class="skill-fill blue" data-width="82"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-header"><span>HTML / CSS</span><span class="skill-pct">85%</span></div>
-          <div class="skill-bar"><div class="skill-fill blue" data-width="85"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-header"><span>Python</span><span class="skill-pct">78%</span></div>
-          <div class="skill-bar"><div class="skill-fill blue" data-width="78"></div></div>
-        </div>
+        <div class="skill-item"><div class="skill-header"><span>C++</span><span class="skill-pct">88%</span></div><div class="skill-bar"><div class="skill-fill blue" data-width="88"></div></div></div>
+        <div class="skill-item"><div class="skill-header"><span>JavaScript</span><span class="skill-pct">80%</span></div><div class="skill-bar"><div class="skill-fill blue" data-width="80"></div></div></div>
+        <div class="skill-item"><div class="skill-header"><span>C</span><span class="skill-pct">82%</span></div><div class="skill-bar"><div class="skill-fill blue" data-width="82"></div></div></div>
+        <div class="skill-item"><div class="skill-header"><span>HTML / CSS</span><span class="skill-pct">85%</span></div><div class="skill-bar"><div class="skill-fill blue" data-width="85"></div></div></div>
+        <div class="skill-item"><div class="skill-header"><span>Python</span><span class="skill-pct">78%</span></div><div class="skill-bar"><div class="skill-fill blue" data-width="78"></div></div></div>
       </div>
       <div class="skill-group glass reveal">
-        <div class="skill-group-title">// Tools & Platforms</div>
-        <div class="skill-item">
-          <div class="skill-header"><span>MongoDB</span><span class="skill-pct">75%</span></div>
-          <div class="skill-bar"><div class="skill-fill purple" data-width="75"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-header"><span>MS SQL Server</span><span class="skill-pct">80%</span></div>
-          <div class="skill-bar"><div class="skill-fill purple" data-width="80"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-header"><span>ETL Pipelines</span><span class="skill-pct">72%</span></div>
-          <div class="skill-bar"><div class="skill-fill purple" data-width="72"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-header"><span>Tableau</span><span class="skill-pct">78%</span></div>
-          <div class="skill-bar"><div class="skill-fill purple" data-width="78"></div></div>
-        </div>
-        <div class="skill-item">
-          <div class="skill-header"><span>VS Code / Git</span><span class="skill-pct">85%</span></div>
-          <div class="skill-bar"><div class="skill-fill purple" data-width="85"></div></div>
-        </div>
+        <div class="skill-group-title">// Tools &amp; Platforms</div>
+        <div class="skill-item"><div class="skill-header"><span>MongoDB</span><span class="skill-pct">75%</span></div><div class="skill-bar"><div class="skill-fill purple" data-width="75"></div></div></div>
+        <div class="skill-item"><div class="skill-header"><span>MS SQL Server</span><span class="skill-pct">80%</span></div><div class="skill-bar"><div class="skill-fill purple" data-width="80"></div></div></div>
+        <div class="skill-item"><div class="skill-header"><span>ETL Pipelines</span><span class="skill-pct">72%</span></div><div class="skill-bar"><div class="skill-fill purple" data-width="72"></div></div></div>
+        <div class="skill-item"><div class="skill-header"><span>Tableau</span><span class="skill-pct">78%</span></div><div class="skill-bar"><div class="skill-fill purple" data-width="78"></div></div></div>
+        <div class="skill-item"><div class="skill-header"><span>VS Code / Git</span><span class="skill-pct">85%</span></div><div class="skill-bar"><div class="skill-fill purple" data-width="85"></div></div></div>
       </div>
       <div class="skill-group glass reveal">
         <div class="skill-group-title">// Soft Skills</div>
@@ -414,68 +412,51 @@
     <div class="section-tag reveal">Work Showcase</div>
     <h2 class="section-title reveal">Featured Projects</h2>
     <div class="projects-grid">
-
-     <div class="project-card glass reveal">
-  <div class="project-num">01</div>
-  <h3 class="project-title">AI Resume Analyzer</h3>
-  <div class="project-tech">
-    <span class="tech-tag">MERN Stack</span>
-    <span class="tech-tag">OpenAI API</span>
-    <span class="tech-tag">NLP</span>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-    <span style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-blue);">Feb'26 – Mar'26</span>
-    <a href="https://github.com/harshitg33/resume-analyzer" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">GitHub ↗</a>
-    <a href="https://resume-analyzer-red-five.vercel.app/" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">View ↗</a>
-  </div>
-  <ul class="project-points">
-    <li>Built AI-powered resume analysis platform — PDF/DOCX upload with ATS compatibility, skill detection & job-fit scores</li>
-    <li>Extracted <strong style="color:var(--neon-blue)">200+</strong> technical and soft skills using NLP; integrated GPT for personalized improvement suggestions</li>
-    <li>Built job-description matching system calculating compatibility scores and highlighting missing keywords</li>
-  </ul>
-</div>
-
-<div class="project-card glass reveal">
-  <div class="project-num">02</div>
-  <h3 class="project-title">Real Time Chat Application</h3>
-  <div class="project-tech">
-    <span class="tech-tag">React</span>
-    <span class="tech-tag">Node.js</span>
-    <span class="tech-tag">Socket.io</span>
-    <span class="tech-tag">MongoDB</span>
-    <span class="tech-tag">JWT</span>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-    <span style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-blue);">Nov'25 – Jan'26</span>
-    <a href="https://github.com/harshitg33/chatapp" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">GitHub ↗</a>
-    <a href="https://chatapp-rho-pink.vercel.app/" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">View ↗</a>
-  </div>
-  <ul class="project-points">
-    <li>Full-stack real-time chat with JWT auth, private rooms & role-based access — message latency under <strong style="color:var(--neon-blue)">100ms</strong> via Socket.io</li>
-    <li>Online/offline indicators, typing indicators & persistent chat history — improved engagement by <strong style="color:var(--neon-blue)">70%</strong></li>
-    <li>Optimized APIs & indexed MongoDB schemas supporting <strong style="color:var(--neon-blue)">500+</strong> concurrent connections; deployed on Render & Vercel</li>
-  </ul>l
-</div>
-
-<div class="project-card glass reveal">
-  <div class="project-num">03</div>
-  <h3 class="project-title">Real Estate Property Web App</h3>
-  <div class="project-tech">
-    <span class="tech-tag">MERN Stack</span>
-    <span class="tech-tag">JWT</span>
-  </div>
-  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-    <span style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-blue);">Sep'25 – Nov'25</span>
-    <a href="https://github.com/harshitg33/estatePro" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">GitHub ↗</a>
-    <a href="https://estate-pro-topaz.vercel.app/" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">View ↗</a>
-  </div>
-  <ul class="project-points">
-    <li>Scalable real estate platform — list, search & manage properties by location, budget & amenities; user engagement up <strong style="color:var(--neon-blue)">55%</strong></li>
-    <li>Secure JWT auth, property image uploads & admin dashboards — enhanced security and usability</li>
-    <li>Optimized backend APIs & DB indexing — reduced property search latency by <strong style="color:var(--neon-blue)">35%</strong></li>
-  </ul>
-</div>
-
+      <div class="project-card glass reveal">
+        <div class="project-num">01</div>
+        <h3 class="project-title">AI Resume Analyzer</h3>
+        <div class="project-tech"><span class="tech-tag">MERN Stack</span><span class="tech-tag">OpenAI API</span><span class="tech-tag">NLP</span></div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-blue);">Feb'26 &#8211; Mar'26</span>
+          <a href="https://github.com/harshitg33/resume-analyzer" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">GitHub &#8599;</a>
+          <a href="https://resume-analyzer-red-five.vercel.app/" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">View &#8599;</a>
+        </div>
+        <ul class="project-points">
+          <li>Built AI-powered resume analysis platform &#8212; PDF/DOCX upload with ATS compatibility, skill detection &amp; job-fit scores</li>
+          <li>Extracted <strong style="color:var(--neon-blue)">200+</strong> technical and soft skills using NLP; integrated GPT for personalized improvement suggestions</li>
+          <li>Built job-description matching system calculating compatibility scores and highlighting missing keywords</li>
+        </ul>
+      </div>
+      <div class="project-card glass reveal">
+        <div class="project-num">02</div>
+        <h3 class="project-title">Real Time Chat Application</h3>
+        <div class="project-tech"><span class="tech-tag">React</span><span class="tech-tag">Node.js</span><span class="tech-tag">Socket.io</span><span class="tech-tag">MongoDB</span><span class="tech-tag">JWT</span></div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-blue);">Nov'25 &#8211; Jan'26</span>
+          <a href="https://github.com/harshitg33/chatapp" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">GitHub &#8599;</a>
+          <a href="https://chatapp-rho-pink.vercel.app/" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">View &#8599;</a>
+        </div>
+        <ul class="project-points">
+          <li>Full-stack real-time chat with JWT auth, private rooms &amp; role-based access &#8212; message latency under <strong style="color:var(--neon-blue)">100ms</strong> via Socket.io</li>
+          <li>Online/offline indicators, typing indicators &amp; persistent chat history &#8212; improved engagement by <strong style="color:var(--neon-blue)">70%</strong></li>
+          <li>Optimized APIs &amp; indexed MongoDB schemas supporting <strong style="color:var(--neon-blue)">500+</strong> concurrent connections; deployed on Render &amp; Vercel</li>
+        </ul>
+      </div>
+      <div class="project-card glass reveal">
+        <div class="project-num">03</div>
+        <h3 class="project-title">Real Estate Property Web App</h3>
+        <div class="project-tech"><span class="tech-tag">MERN Stack</span><span class="tech-tag">JWT</span></div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+          <span style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-blue);">Sep'25 &#8211; Nov'25</span>
+          <a href="https://github.com/harshitg33/estatePro" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">GitHub &#8599;</a>
+          <a href="https://estate-pro-topaz.vercel.app/" target="_blank" style="font-family:'Share Tech Mono',monospace;font-size:.7rem;color:var(--neon-purple);text-decoration:none;">View &#8599;</a>
+        </div>
+        <ul class="project-points">
+          <li>Scalable real estate platform &#8212; list, search &amp; manage properties by location, budget &amp; amenities; user engagement up <strong style="color:var(--neon-blue)">55%</strong></li>
+          <li>Secure JWT auth, property image uploads &amp; admin dashboards &#8212; enhanced security and usability</li>
+          <li>Optimized backend APIs &amp; DB indexing &#8212; reduced property search latency by <strong style="color:var(--neon-blue)">35%</strong></li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>
@@ -484,13 +465,12 @@
 <section id="training">
   <div class="section-wrap">
     <div class="section-tag reveal">Learning Journey</div>
-    <h2 class="section-title reveal">Training & Certifications</h2>
-
+    <h2 class="section-title reveal">Training &amp; Certifications</h2>
     <div class="training-box glass reveal">
-      <div class="training-icon">🚀</div>
+      <div class="training-icon">&#128640;</div>
       <div>
         <div class="training-company">Technovation Academy</div>
-        <div class="training-course">EdTech Company — Data Structures & Algorithms Using C++</div>
+        <div class="training-course">EdTech Company &#8212; Data Structures &amp; Algorithms Using C++</div>
         <ul class="training-points">
           <li>Mastered arrays, linked lists, stacks, queues, trees, graphs, and hash maps</li>
           <li>Implemented sorting, searching, recursion, and dynamic programming patterns</li>
@@ -498,36 +478,11 @@
         </ul>
       </div>
     </div>
-
     <div class="certs-grid">
-      <div class="cert-card glass reveal">
-        <div class="cert-icon">📊</div>
-        <div>
-          <div class="cert-name">Data Visualization with Tableau</div>
-          <div class="cert-issuer">Coursera</div>
-        </div>
-      </div>
-      <div class="cert-card glass reveal">
-        <div class="cert-icon">⚙️</div>
-        <div>
-          <div class="cert-name">Data Engineering Professional Certification</div>
-          <div class="cert-issuer">Altair RapidMiner</div>
-        </div>
-      </div>
-      <div class="cert-card glass reveal">
-        <div class="cert-icon">🐍</div>
-        <div>
-          <div class="cert-name">Python Certification</div>
-          <div class="cert-issuer">HackerRank</div>
-        </div>
-      </div>
-      <div class="cert-card glass reveal">
-        <div class="cert-icon">🗄️</div>
-        <div>
-          <div class="cert-name">SQL Certification</div>
-          <div class="cert-issuer">HackerRank</div>
-        </div>
-      </div>
+      <div class="cert-card glass reveal"><div class="cert-icon">&#128202;</div><div><div class="cert-name">Data Visualization with Tableau</div><div class="cert-issuer">Coursera</div></div></div>
+      <div class="cert-card glass reveal"><div class="cert-icon">&#9881;&#65039;</div><div><div class="cert-name">Data Engineering Professional Certification</div><div class="cert-issuer">Altair RapidMiner</div></div></div>
+      <div class="cert-card glass reveal"><div class="cert-icon">&#128013;</div><div><div class="cert-name">Python Certification</div><div class="cert-issuer">HackerRank</div></div></div>
+      <div class="cert-card glass reveal"><div class="cert-icon">&#128451;&#65039;</div><div><div class="cert-name">SQL Certification</div><div class="cert-issuer">HackerRank</div></div></div>
     </div>
   </div>
 </section>
@@ -539,26 +494,19 @@
     <h2 class="section-title reveal">Education</h2>
     <div class="edu-timeline">
       <div class="edu-item glass reveal">
-        <div class="edu-degree">Bachelor of Technology — Computer Science</div>
+        <div class="edu-degree">Bachelor of Technology &#8212; Computer Science</div>
         <div class="edu-institution">Lovely Professional University, Phagwara</div>
-        <div class="edu-meta">
-          <span class="edu-badge score">CGPA: 7.32</span>
-          <span class="edu-badge year">Aug 2023 – Present</span>
-        </div>
+        <div class="edu-meta"><span class="edu-badge score">CGPA: 7.32</span><span class="edu-badge year">Aug 2023 &#8211; Present</span></div>
       </div>
       <div class="edu-item glass reveal">
-        <div class="edu-degree">Intermediate — PCM (Class XII)</div>
+        <div class="edu-degree">Intermediate &#8212; PCM (Class XII)</div>
         <div class="edu-institution">Shiv Jyoti Public School</div>
-        <div class="edu-meta">
-          <span class="edu-badge score">80%</span>
-        </div>
+        <div class="edu-meta"><span class="edu-badge score">80%</span></div>
       </div>
       <div class="edu-item glass reveal">
         <div class="edu-degree">Matriculation (Class X)</div>
         <div class="edu-institution">Shiv Jyoti Public School</div>
-        <div class="edu-meta">
-          <span class="edu-badge score">88%</span>
-        </div>
+        <div class="edu-meta"><span class="edu-badge score">88%</span></div>
       </div>
     </div>
   </div>
@@ -573,41 +521,17 @@
       <div class="reveal-left">
         <h3 style="font-family:'Orbitron',monospace;font-size:1.1rem;color:var(--neon-blue);margin-bottom:30px;">Let's Build Something Together</h3>
         <p style="color:var(--text-secondary);font-size:.95rem;line-height:1.8;margin-bottom:30px;">Open to internships, collaborations, and interesting projects. If you have an idea or opportunity, let's connect.</p>
-        <div class="contact-item">
-          <div class="contact-icon">✉️</div>
-          <div><div class="contact-label">Email</div><div class="contact-value"><a href="mailto:harshit_guglani29@gmail.com">harshit_guglani29@gmail.com</a></div></div>
-        </div>
-        <div class="contact-item">
-          <div class="contact-icon">📱</div>
-          <div><div class="contact-label">Phone</div><div class="contact-value"><a href="tel:+919592461900">+91 9592461900</a></div></div>
-        </div>
-        <div class="contact-item">
-          <div class="contact-icon">💼</div>
-          <div><div class="contact-label">LinkedIn</div><div class="contact-value"><a href="https://linkedin.com/in/harshitg192/" target="_blank">linkedin.com/in/harshitg192</a></div></div>
-        </div>
-        <div class="contact-item">
-          <div class="contact-icon">🐙</div>
-          <div><div class="contact-label">GitHub</div><div class="contact-value"><a href="https://github.com/harshitg33" target="_blank">github.com/harshitg33</a></div></div>
-        </div>
+        <div class="contact-item"><div class="contact-icon">&#9993;&#65039;</div><div><div class="contact-label">Email</div><div class="contact-value"><a href="mailto:harshit_guglani29@gmail.com">harshit_guglani29@gmail.com</a></div></div></div>
+        <div class="contact-item"><div class="contact-icon">&#128241;</div><div><div class="contact-label">Phone</div><div class="contact-value"><a href="tel:+919592461900">+91 9592461900</a></div></div></div>
+        <div class="contact-item"><div class="contact-icon">&#128188;</div><div><div class="contact-label">LinkedIn</div><div class="contact-value"><a href="https://linkedin.com/in/harshitg192/" target="_blank">linkedin.com/in/harshitg192</a></div></div></div>
+        <div class="contact-item"><div class="contact-icon">&#128025;</div><div><div class="contact-label">GitHub</div><div class="contact-value"><a href="https://github.com/harshitg33" target="_blank">github.com/harshitg33</a></div></div></div>
       </div>
       <div class="contact-form glass reveal-right">
-        <div class="form-group">
-          <label>Name</label>
-          <input type="text" id="fname" placeholder="Your full name">
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="femail" placeholder="your@email.com">
-        </div>
-        <div class="form-group">
-          <label>Subject</label>
-          <input type="text" id="fsubject" placeholder="What's this about?">
-        </div>
-        <div class="form-group">
-          <label>Message</label>
-          <textarea id="fmessage" placeholder="Tell me about your project or opportunity..."></textarea>
-        </div>
-        <button class="btn-submit" id="sendBtn">⟶ Send Message</button>
+        <div class="form-group"><label>Name</label><input type="text" id="fname" placeholder="Your full name"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="femail" placeholder="your@email.com"></div>
+        <div class="form-group"><label>Subject</label><input type="text" id="fsubject" placeholder="What's this about?"></div>
+        <div class="form-group"><label>Message</label><textarea id="fmessage" placeholder="Tell me about your project or opportunity..."></textarea></div>
+        <button class="btn-submit" id="sendBtn">&#10230; Send Message</button>
       </div>
     </div>
   </div>
@@ -621,146 +545,109 @@
     <a href="https://github.com/harshitg33" target="_blank" class="social-btn">GitHub</a>
     <a href="tel:+919592461900" class="social-btn">Phone</a>
   </div>
-  <div class="footer-copy">
-    © 2025 <span>Harshit Guglani</span> · Crafted with <span>♥</span> in Phagwara, India
-  </div>
+  <div class="footer-copy">&#169; 2025 <span>Harshit Guglani</span> &middot; Crafted with <span>&#9829;</span> in Phagwara, India</div>
 </footer>
 
-<div class="toast" id="toast">✓ Message sent! I'll be in touch soon.</div>
+<div class="toast" id="toast">&#10003; Message sent! I'll be in touch soon.</div>
 
 <script>
-// =========== STARFIELD ===========
 const canvas = document.getElementById('starfield');
 const ctx = canvas.getContext('2d');
 let W, H, stars = [], shootingStars = [];
-
 function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
 resize(); window.addEventListener('resize', resize);
-
 function initStars() {
   stars = [];
   for (let i = 0; i < 250; i++) {
-    stars.push({
-      x: Math.random() * W, y: Math.random() * H,
-      r: Math.random() * 1.5 + 0.2,
-      o: Math.random() * 0.7 + 0.3,
-      s: Math.random() * 0.3 + 0.05,
-      twinkle: Math.random() * Math.PI * 2
-    });
+    stars.push({ x: Math.random()*W, y: Math.random()*H, r: Math.random()*1.5+0.2, o: Math.random()*0.7+0.3, s: Math.random()*0.3+0.05, twinkle: Math.random()*Math.PI*2 });
   }
 }
 initStars();
-
-function spawnShoot() {
-  shootingStars.push({ x: Math.random() * W, y: Math.random() * H * 0.4, len: Math.random() * 100 + 60, speed: Math.random() * 8 + 6, angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3, alpha: 1 });
-}
-setInterval(spawnShoot, 3500);
-
-function drawStars(t) {
-  ctx.clearRect(0, 0, W, H);
+setInterval(() => { shootingStars.push({ x: Math.random()*W, y: Math.random()*H*0.4, len: Math.random()*100+60, speed: Math.random()*8+6, angle: Math.PI/4+(Math.random()-0.5)*0.3, alpha: 1 }); }, 3500);
+function drawStars() {
+  ctx.clearRect(0,0,W,H);
   stars.forEach(s => {
     s.twinkle += 0.015;
-    const o = s.o * (0.6 + 0.4 * Math.sin(s.twinkle));
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${o})`;
-    ctx.fill();
-    s.y += s.s * 0.1;
-    if (s.y > H) s.y = 0;
+    ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+    ctx.fillStyle = `rgba(255,255,255,${s.o*(0.6+0.4*Math.sin(s.twinkle))})`; ctx.fill();
+    s.y += s.s*0.1; if(s.y>H) s.y=0;
   });
-  shootingStars.forEach((ss, i) => {
-    ctx.beginPath();
-    ctx.moveTo(ss.x, ss.y);
-    const ex = ss.x - Math.cos(ss.angle) * ss.len;
-    const ey = ss.y - Math.sin(ss.angle) * ss.len;
-    const g = ctx.createLinearGradient(ss.x, ss.y, ex, ey);
-    g.addColorStop(0, `rgba(0,212,255,${ss.alpha})`);
-    g.addColorStop(1, 'rgba(0,212,255,0)');
-    ctx.strokeStyle = g; ctx.lineWidth = 1.5;
-    ctx.lineTo(ex, ey); ctx.stroke();
-    ss.x += Math.cos(ss.angle) * ss.speed;
-    ss.y += Math.sin(ss.angle) * ss.speed;
-    ss.alpha -= 0.015;
-    if (ss.alpha <= 0) shootingStars.splice(i, 1);
+  shootingStars.forEach((ss,i) => {
+    ctx.beginPath(); ctx.moveTo(ss.x,ss.y);
+    const ex=ss.x-Math.cos(ss.angle)*ss.len, ey=ss.y-Math.sin(ss.angle)*ss.len;
+    const g=ctx.createLinearGradient(ss.x,ss.y,ex,ey);
+    g.addColorStop(0,`rgba(0,212,255,${ss.alpha})`); g.addColorStop(1,'rgba(0,212,255,0)');
+    ctx.strokeStyle=g; ctx.lineWidth=1.5; ctx.lineTo(ex,ey); ctx.stroke();
+    ss.x+=Math.cos(ss.angle)*ss.speed; ss.y+=Math.sin(ss.angle)*ss.speed; ss.alpha-=0.015;
+    if(ss.alpha<=0) shootingStars.splice(i,1);
   });
   requestAnimationFrame(drawStars);
 }
 drawStars();
 
-// =========== CURSOR ===========
 const cur = document.getElementById('cursor');
 const trail = document.getElementById('cursorTrail');
-let mx = 0, my = 0, tx = 0, ty = 0;
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx+'px'; cur.style.top = my+'px'; });
-function animTrail() { tx += (mx-tx)*.12; ty += (my-ty)*.12; trail.style.left=tx+'px'; trail.style.top=ty+'px'; requestAnimationFrame(animTrail); }
+let mx=0,my=0,tx=0,ty=0;
+document.addEventListener('mousemove', e => {
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+  cur.style.opacity='1'; trail.style.opacity='1';
+});
+function animTrail() { tx+=(mx-tx)*.12; ty+=(my-ty)*.12; trail.style.left=tx+'px'; trail.style.top=ty+'px'; requestAnimationFrame(animTrail); }
 animTrail();
 document.querySelectorAll('a,button,.btn,.project-card,.cert-card,.contact-item,.social-btn').forEach(el => {
   el.addEventListener('mouseenter', () => { cur.style.width='16px'; cur.style.height='16px'; trail.style.width='50px'; trail.style.height='50px'; });
   el.addEventListener('mouseleave', () => { cur.style.width='10px'; cur.style.height='10px'; trail.style.width='30px'; trail.style.height='30px'; });
 });
 
-// =========== TYPING ===========
-const lines = ["Building intelligent solutions using code and data", "Turning algorithms into real-world impact", "C++ · Python · ML · Full Stack Dev"];
-let li = 0, ci = 0, del = false;
-const el = document.getElementById('typingText');
+const lines = ["Building intelligent solutions using code and data","Turning algorithms into real-world impact","C++ · Python · ML · Full Stack Dev"];
+let li=0,ci=0,del=false;
+const typEl = document.getElementById('typingText');
 function type() {
-  const cur = lines[li];
-  if (!del) { el.textContent = cur.slice(0, ++ci); if (ci === cur.length) { del = true; setTimeout(type, 1800); return; } }
-  else { el.textContent = cur.slice(0, --ci); if (ci === 0) { del = false; li = (li+1) % lines.length; } }
-  setTimeout(type, del ? 40 : 55);
+  const c=lines[li];
+  if(!del){typEl.textContent=c.slice(0,++ci);if(ci===c.length){del=true;setTimeout(type,1800);return;}}
+  else{typEl.textContent=c.slice(0,--ci);if(ci===0){del=false;li=(li+1)%lines.length;}}
+  setTimeout(type,del?40:55);
 }
 type();
 
-// =========== NAV ===========
-const ham = document.getElementById('hamburger');
-const nav = document.getElementById('navLinks');
-ham.addEventListener('click', () => nav.classList.toggle('open'));
-nav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+const ham=document.getElementById('hamburger');
+const nav=document.getElementById('navLinks');
+ham.addEventListener('click',()=>nav.classList.toggle('open'));
+nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nav.classList.remove('open')));
 
-// =========== SCROLL REVEAL ===========
-const reveals = document.querySelectorAll('.reveal,.reveal-left,.reveal-right');
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
-}, { threshold: 0.12 });
-reveals.forEach(r => observer.observe(r));
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(r=>revealObs.observe(r));
+setTimeout(()=>{ document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>el.classList.add('visible')); }, 800);
 
-// =========== SKILL BARS ===========
-const skillObserver = new IntersectionObserver(entries => {
+const skillObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.querySelectorAll('.skill-fill').forEach(fill => {
-        setTimeout(() => { fill.style.width = fill.dataset.width + '%'; }, 200);
-      });
-    }
+    if(e.isIntersecting){ e.target.querySelectorAll('.skill-fill').forEach(f=>{ setTimeout(()=>{f.style.width=f.dataset.width+'%';},200); }); skillObs.unobserve(e.target); }
   });
 }, { threshold: 0.3 });
-document.querySelectorAll('.skill-group').forEach(g => skillObserver.observe(g));
+document.querySelectorAll('.skill-group').forEach(g=>skillObs.observe(g));
 
-// =========== CONTACT FORM ===========
 document.getElementById('sendBtn').addEventListener('click', () => {
-  const n = document.getElementById('fname').value.trim();
-  const em = document.getElementById('femail').value.trim();
-  const s = document.getElementById('fsubject').value.trim();
-  const m = document.getElementById('fmessage').value.trim();
-  if (!n || !em || !s || !m) { alert('Please fill in all fields.'); return; }
-  const btn = document.getElementById('sendBtn');
-  btn.textContent = '⟳ Sending...';
-  setTimeout(() => {
-    btn.textContent = '✓ Sent!';
-    document.getElementById('fname').value = '';
-    document.getElementById('femail').value = '';
-    document.getElementById('fsubject').value = '';
-    document.getElementById('fmessage').value = '';
-    const toast = document.getElementById('toast');
+  const n=document.getElementById('fname').value.trim();
+  const em=document.getElementById('femail').value.trim();
+  const s=document.getElementById('fsubject').value.trim();
+  const m=document.getElementById('fmessage').value.trim();
+  if(!n||!em||!s||!m){alert('Please fill in all fields.');return;}
+  const btn=document.getElementById('sendBtn');
+  btn.textContent='Sending...';
+  setTimeout(()=>{
+    btn.textContent='Sent!';
+    ['fname','femail','fsubject','fmessage'].forEach(id=>document.getElementById(id).value='');
+    const toast=document.getElementById('toast');
     toast.classList.add('show');
-    setTimeout(() => { toast.classList.remove('show'); btn.textContent = '⟶ Send Message'; }, 3500);
-  }, 1400);
+    setTimeout(()=>{toast.classList.remove('show');btn.textContent='Send Message';},3500);
+  },1400);
 });
 
-// =========== NAV SCROLL COLOR ===========
 window.addEventListener('scroll', () => {
-  const nb = document.getElementById('navbar');
-  nb.style.background = window.scrollY > 50 ? 'rgba(2,0,16,0.92)' : 'rgba(2,0,16,0.7)';
+  document.getElementById('navbar').style.background = window.scrollY>50?'rgba(2,0,16,0.92)':'rgba(2,0,16,0.7)';
 });
 </script>
 </body>
